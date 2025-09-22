@@ -1,0 +1,15 @@
+output_falcon/
+output_pari/
+output*/
+
+.DS_Store
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+*.pyz
+*.pywz
+*.pyzw
+*.pyzwz
+*.pyzwzw
