@@ -1,16 +1,27 @@
-from enum import EnumMeta
-from vision import parse_events, to_timedelta
+import argparse
+from history_vision import parse_events, to_timedelta
 from pathlib import Path
 import cv2
 import pandas as pd
-from datetime import timedelta
 
 
 if __name__ == "__main__":
-    game_id = 8461854486 #8461735141 # 8461613337 # 8461476910
-    our_side = 'Dire'
-    enemy_side = 'Radiant'
-    enemy_team = 'falcon'
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--team', type=str, default='falcon', choices=['falcon', 'pari'])
+    parser.add_argument('--game_id', type=int, default=8461854486, choices=[8461735141, 8461613337, 8461476910])
+    parser.add_argument('--our_side', type=str, default='Dire', choices=['Dire', 'Radiant'])
+    parser.add_argument('--enemy_team', type=str, default='falcon', choices=['falcon', 'pari'])
+    args = parser.parse_args()
+    game_name = args.team
+    assert game_name in ['falcon', 'pari']
+    game_id = args.game_id
+    our_side = args.our_side
+    if our_side == 'Dire':
+        enemy_side = 'Radiant'
+    else:
+        enemy_side = 'Dire'
+    enemy_team = args.enemy_team
+    assert enemy_team in ['falcon', 'pari']
 
     out_dir = Path(f'output_{enemy_team}')
     out_dir.mkdir(exist_ok=True)

@@ -1,6 +1,7 @@
-from bs4 import BeautifulSoup
 import cv2
+import argparse
 import pandas as pd
+from bs4 import BeautifulSoup
 from pathlib import Path
 from datetime import timedelta
 
@@ -104,7 +105,12 @@ def parse_events(file_path, map_width, map_height):
     return events
 
 if __name__ == "__main__":
-    game_name = 'falcon'
+    argparse = argparse.ArgumentParser()
+    argparse.add_argument('--team', type=str, default='falcon', choices=['falcon', 'pari'])
+    args = argparse.parse_args()
+    game_name = args.team
+    assert game_name in ['falcon', 'pari']
+
     csv_path = f'game_{game_name}.csv'
     only_falcon_xg = False
 
@@ -297,12 +303,3 @@ if __name__ == "__main__":
                 cv2.imwrite(str(out_dir / f'{title}.jpg'), vis_map)
                 print(f'{title}.jpg saved')
                 
-                
-
-
-
-    
-
-    # events = parse_events(file_path, csv_path)
-    # for event in events:
-    #     print(event)
