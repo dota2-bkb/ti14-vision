@@ -14,6 +14,16 @@ This project processes HTML match data from DOTABUFF to extract and visualize vi
 - **Multi-game Comparison**: Overlay multiple games to identify patterns
 - **Individual Game Analysis**: Detailed single-game vision analysis with enemy ward destruction tracking
 
+![](assets/Parivision_Dire_before_0_minutes.jpg)
+![](assets/Parivision_Dire_before_6_minutes.jpg)
+
+*Figure: Past game ward placements for Team Parivision on Dire side - showing vision patterns across different time periods (pre-game and 0-6 minutes)*
+
+![](assets/falcon-Radiant-8461476910.jpg)
+
+*Figure: Final game #1 - Team Falcon ward placement analysis on Radiant side. Green circles indicate destroyed wards, red circles show wards that were never destroyed, and blue circles represent smoke usage locations.*
+
+
 ## Data Source
 
 The HTML data files are downloaded from **DOTABUFF**, specifically from the "Vision" tab of match pages. I use the browser to open the link (https://www.dotabuff.com/matches/8461854486/vision)[https://www.dotabuff.com/matches/8461854486/vision], replace the number with the **Game Match ID**  Each HTML file contains detailed match logs with vision events including:
@@ -114,74 +124,3 @@ Parameters:
   - `side`: Team side (Radiant/Dire)
   - `hero`: Hero name
   - `position`: Map coordinates (percentage and pixels)
-
-## Game Data Format
-
-The CSV files (`game_falcon.csv`, `game_pari.csv`) contain match metadata:
-- `场次`: Match description
-- `{Team} 天辉/夜魇`: Team's side (Radiant/Dire in Chinese)
-- `胜者`: Winner
-- `比赛id`: Match ID (corresponds to DOTABUFF match ID)
-
-## Technical Details
-
-### Vision Event Detection
-
-The parser identifies three key event types:
-1. **Ward Placement**: "placed Observer Ward" events
-2. **Ward Destruction**: "destroyed Observer Ward" events  
-3. **Smoke Usage**: "activated" events (Smoke of Deceit)
-
-### Coordinate System
-
-- HTML percentages are converted to pixel coordinates on the Dota 2 map
-- Map dimensions are extracted from `dota2_map.jpg`
-- Coordinates represent exact in-game positions
-
-### Time Processing
-
-- Supports both MM:SS and HH:MM:SS formats
-- Pre-game events (negative timestamps) are handled separately
-- Events are filtered and grouped by configurable time slots
-
-## Customization
-
-### Time Slots
-Modify `vis_time_slots` in the scripts to change analysis periods:
-```python
-vis_time_slots = [0, 6, 12, 20, 40, 100]  # minutes
-```
-
-### Colors
-Game colors can be customized in the `game_color` array for better visualization.
-
-### Hero Name Mapping
-Update `hero_dict` in `single_game_vision.py` for custom hero name display.
-
-## Dependencies
-
-- **opencv-python**: Image processing and visualization
-- **pandas**: Data manipulation and CSV handling
-- **beautifulsoup4**: HTML parsing for DOTABUFF data
-
-## Contributing
-
-1. Ensure HTML files are properly downloaded from DOTABUFF Vision pages
-2. Update CSV metadata files when adding new matches
-3. Test visualization outputs for clarity and accuracy
-4. Follow existing naming conventions for consistency
-
-## Notes
-
-- The project is specifically designed for TI14 analysis of Falcon and Team Pari
-- HTML files must be downloaded manually from DOTABUFF
-- Generated images include "Made by SPACE" watermark
-- Color coding helps distinguish between different games in overlay visualizations
-
-## Future Enhancements
-
-- Automated DOTABUFF data fetching
-- Interactive web-based visualizations
-- Advanced statistical analysis of vision patterns
-- Support for additional teams and tournaments
-- Real-time match analysis integration

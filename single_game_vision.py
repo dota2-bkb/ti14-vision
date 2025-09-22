@@ -8,7 +8,7 @@ import pandas as pd
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--team', type=str, default='falcon', choices=['falcon', 'pari'])
-    parser.add_argument('--game_id', type=int, default=8461854486, choices=[8461735141, 8461613337, 8461476910])
+    parser.add_argument('--game_id', type=int, default=8461476910, choices=[8461735141, 8461613337, 8461476910])
     parser.add_argument('--our_side', type=str, default='Dire', choices=['Dire', 'Radiant'])
     parser.add_argument('--enemy_team', type=str, default='falcon', choices=['falcon', 'pari'])
     args = parser.parse_args()
