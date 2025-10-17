@@ -1,5 +1,7 @@
 # Dota 2 视野分析工具 - TI14
 
+[English](README_EN.md)
+
 基于Python的专业Dota 2比赛视野控制分析工具（守卫插眼、烟雾使用），专门针对TI14（国际邀请赛2014）战队Falcon和Team Parivision。
 
 ## 项目概述
