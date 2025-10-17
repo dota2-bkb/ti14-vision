@@ -51,20 +51,13 @@ dota2/
 └── requirements.txt     # Python依赖包
 ```
 
-## 安装说明
+## 使用方法
 
-1. 克隆仓库：
-```bash
-git clone <repository-url>
-cd dota2
-```
-
-2. 安装依赖：
+### 安装说明
+安装依赖：
 ```bash
 pip install -r requirements.txt
 ```
-
-## 使用方法
 
 ### 批量分析（多场比赛）
 
