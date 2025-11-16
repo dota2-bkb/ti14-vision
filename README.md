@@ -28,7 +28,7 @@ A comprehensive tool for analyzing vision control (ward placement, smoke usage) 
 *Interactive web visualizer showing game selection, event controls, and real-time map visualization with observer wards, paths, and statistics*
 
 ### Generated Analysis Results
-![Analysis Results](output_yb/yb-dire-Wards<=2-Top%205%20Games.jpg)
+![Analysis Results](assets/yb-dire-Wards-2-Top-5-Games.jpg)
 *Example analysis output: YB team Dire side ward placement patterns across top 5 games, showing observer ward positions with timestamps and movement paths*
 
 ## 📊 Features
