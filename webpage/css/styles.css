@@ -1,0 +1,510 @@
+/* Dota 2 Events Visualizer Styles */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 30px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.header-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 2.5em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    flex: 1;
+}
+
+.upload-section {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    flex: 0 0 350px;
+}
+
+.upload-section h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.1em;
+}
+
+.upload-section p {
+    margin: 0 0 12px 0;
+    font-size: 0.9em;
+    line-height: 1.3;
+}
+
+.file-input-wrapper {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    background: #4CAF50;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    border: none;
+}
+
+.file-input-wrapper:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.file-input-wrapper input[type=file] {
+    position: absolute;
+    left: -9999px;
+}
+
+.controls-section {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+    margin-top: 30px;
+}
+
+.game-selector {
+    flex: 0 0 300px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    height: 1120px;
+    overflow-y: auto;
+}
+
+.game-selector h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #FFD700;
+}
+
+.game-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 5px;
+    transition: background 0.2s ease;
+}
+
+.game-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.game-item input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.2);
+}
+
+.game-item label {
+    cursor: pointer;
+    flex: 1;
+    font-size: 14px;
+}
+
+.game-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.game-main-info {
+    font-weight: bold;
+    font-size: 14px;
+    color: #FFD700;
+}
+
+.game-sub-info {
+    font-size: 12px;
+    color: #CCCCCC;
+    opacity: 0.9;
+}
+
+.opponent-name {
+    color: #FF6B6B;
+    font-weight: 500;
+}
+
+.side-section {
+    margin-bottom: 25px;
+}
+
+.side-section h4 {
+    margin: 0 0 10px 0;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.side-section.radiant h4 {
+    background: rgba(144, 238, 144, 0.2);
+    color: #90EE90;
+    border: 1px solid rgba(144, 238, 144, 0.3);
+}
+
+.side-section.dire h4 {
+    background: rgba(255, 107, 107, 0.2);
+    color: #FF6B6B;
+    border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.side-games {
+    padding-left: 10px;
+}
+
+.side-controls {
+    margin-bottom: 10px;
+    display: flex;
+    gap: 8px;
+}
+
+.side-btn {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    margin: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    font-size: 12px;
+}
+
+.side-btn:hover {
+    background: #2980b9;
+}
+
+.side-btn.danger {
+    background: #e74c3c;
+}
+
+.side-btn.danger:hover {
+    background: #c0392b;
+}
+
+.side-radiant {
+    color: #90EE90;
+}
+
+.side-dire {
+    color: #FF6B6B;
+}
+
+.visualization-section {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 20px;
+    position: relative;
+}
+
+.visualization-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #FFD700;
+}
+
+.visualization-controls {
+    margin-bottom: 15px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.slider-control {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.slider-control label {
+    font-size: 14px;
+    min-width: 200px;
+}
+
+.slider {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.3);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #FFD700;
+    cursor: pointer;
+    border: 2px solid #FFA500;
+}
+
+.slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #FFD700;
+    cursor: pointer;
+    border: 2px solid #FFA500;
+}
+
+.toggle-controls {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.toggle-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.toggle-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.toggle-btn.active {
+    background: #27ae60;
+}
+
+.toggle-btn.active:hover {
+    background: #229954;
+}
+
+.toggle-btn:not(.active):hover {
+    background: #c0392b;
+}
+
+.map-container {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 100%; /* 1:1 aspect ratio - adjust based on your map image */
+    background: #2c3e50;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid #34495e;
+}
+
+.map-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('../../dota2_map.jpg') center/contain;
+    background-repeat: no-repeat;
+}
+
+.event-marker {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border: 2px solid white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.event-marker:hover {
+    transform: scale(1.5);
+    z-index: 20;
+}
+
+.event-marker.observer {
+    background: #FFD700;
+    border: 2px solid #FFA500;
+    border-radius: 50%;
+}
+
+.event-marker.sentry {
+    background: #4169E1;
+    border: 2px solid #0000CD;
+    border-radius: 2px;
+}
+
+.event-marker.smoke {
+    background: #9932CC;
+    border: 2px solid #8A2BE2;
+    border-radius: 2px;
+    transform: rotate(45deg);
+}
+
+.event-marker.smoke:hover {
+    transform: rotate(45deg) scale(1.5);
+}
+
+.event-time {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: bold;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 15;
+    transform: translate(-50%, -100%);
+    margin-top: -5px;
+}
+
+.path-arrow {
+    position: absolute;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 1000;
+    max-width: 200px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.legend {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.legend-marker {
+    width: 12px;
+    height: 12px;
+    margin-right: 8px;
+}
+
+.legend-marker.observer {
+    background: #FFD700;
+    border: 2px solid #FFA500;
+    border-radius: 50%;
+}
+
+.legend-marker.sentry {
+    background: #4169E1;
+    border: 2px solid #0000CD;
+    border-radius: 2px;
+}
+
+.legend-marker.smoke {
+    background: #9932CC;
+    border: 2px solid #8A2BE2;
+    transform: rotate(45deg);
+}
+
+.stats-section {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2em;
+    font-weight: bold;
+    color: #FFD700;
+}
+
+.stat-label {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+.control-buttons {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.btn {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn:hover {
+    background: #2980b9;
+}
+
+.btn.danger {
+    background: #e74c3c;
+}
+
+.btn.danger:hover {
+    background: #c0392b;
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    font-size: 18px;
+}
+
+.error {
+    color: #ff6b6b;
+    text-align: center;
+    padding: 20px;
+    background: rgba(255, 107, 107, 0.1);
+    border-radius: 8px;
+    margin: 10px 0;
+}
