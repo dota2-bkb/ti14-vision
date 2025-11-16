@@ -13,6 +13,7 @@ let showSmoke = true;
 let showArrows = true;
 let showTime = true;
 let observerOnlyMode = false;
+let showPlayerNames = false;
 
 // Initialize event listeners when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -485,6 +486,27 @@ function toggleTime() {
 }
 
 /**
+ * Toggle player names display
+ */
+function togglePlayerNames() {
+    showPlayerNames = !showPlayerNames;
+    const toggleBtn = document.getElementById('playerNameToggle');
+    
+    if (showPlayerNames) {
+        toggleBtn.textContent = '👤 Hide Player Names';
+        toggleBtn.classList.add('active');
+    } else {
+        toggleBtn.textContent = '👤 Show Player Names';
+        toggleBtn.classList.remove('active');
+    }
+    
+    if (gamesData.length > 0) {
+        updateVisualization();
+        updateStats();
+    }
+}
+
+/**
  * Toggle observer-only mode
  */
 function toggleObserverOnly() {
@@ -511,9 +533,10 @@ function toggleObserverOnly() {
 function updateVisualization() {
     const mapContainer = document.getElementById('mapContainer');
     
-    // Remove existing markers, time labels, and arrows
+    // Remove existing markers, time labels, player names, and arrows
     document.querySelectorAll('.event-marker').forEach(marker => marker.remove());
     document.querySelectorAll('.event-time').forEach(timeLabel => timeLabel.remove());
+    document.querySelectorAll('.player-name').forEach(playerLabel => playerLabel.remove());
     document.querySelectorAll('.path-arrow').forEach(arrow => arrow.remove());
 
     // Filter events based on selected games and ward limits
@@ -581,9 +604,10 @@ function updateVisualization() {
                 event.observerWardNumber = observerWardCounts[event.gameId];
             }
             
-            const { marker, timeLabel } = createEventMarker(event);
+            const { marker, timeLabel, playerNameLabel } = createEventMarker(event);
             mapContainer.appendChild(marker);
             mapContainer.appendChild(timeLabel);
+            mapContainer.appendChild(playerNameLabel);
         }
     });
 
@@ -638,6 +662,25 @@ function createEventMarker(event) {
         timeLabel.style.display = 'none';
     }
 
+    // Create player name label
+    const playerNameLabel = document.createElement('div');
+    playerNameLabel.className = 'player-name';
+    playerNameLabel.style.left = `${left}%`;
+    playerNameLabel.style.top = `${top}%`;
+    
+    // Find the player name for this hero in this game
+    const gameData = gamesData.find(game => game.gameId === event.gameId);
+    let playerName = event.hero; // fallback to hero name
+    if (gameData && gameData.heroPlayers && gameData.heroPlayers[event.hero]) {
+        playerName = gameData.heroPlayers[event.hero];
+    }
+    
+    playerNameLabel.textContent = playerName;
+    
+    if (!showPlayerNames) {
+        playerNameLabel.style.display = 'none';
+    }
+
     marker.addEventListener('mouseenter', function(e) {
         showTooltip(e, event);
     });
@@ -646,7 +689,7 @@ function createEventMarker(event) {
         hideTooltip();
     });
 
-    return { marker, timeLabel };
+    return { marker, timeLabel, playerNameLabel };
 }
 
 /**
@@ -657,8 +700,15 @@ function showTooltip(e, event) {
     const actionText = event.key_action === 'smoke' ? 'Smoke of Deceit' : 
                       event.key_action === 'placed_observer' ? 'Observer Ward' : 'Sentry Ward';
     
+    // Find the player name for this hero in this game
+    const gameData = gamesData.find(game => game.gameId === event.gameId);
+    let playerName = '';
+    if (gameData && gameData.heroPlayers && gameData.heroPlayers[event.hero]) {
+        playerName = ` (${gameData.heroPlayers[event.hero]})`;
+    }
+    
     tooltip.innerHTML = `
-        <strong>${event.hero}</strong><br>
+        <strong>${event.hero}${playerName}</strong><br>
         ${actionText}<br>
         Time: ${event.time}<br>
         Game: ${event.gameId} (${event.side})<br>

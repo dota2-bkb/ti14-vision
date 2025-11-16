@@ -422,6 +422,24 @@ h1 {
     margin-top: -5px;
 }
 
+.player-name {
+    position: absolute;
+    background: rgba(0, 123, 255, 0.9);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 9px;
+    font-weight: bold;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 16;
+    transform: translate(-50%, 0%);
+    margin-top: 8px;
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .path-arrow {
     position: absolute;
     pointer-events: none;
