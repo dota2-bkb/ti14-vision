@@ -141,7 +141,7 @@ h1 {
 }
 
 .opponent-name {
-    color: #FF6B6B;
+    color: #ff9746;
     font-weight: 500;
 }
 
@@ -167,10 +167,6 @@ h1 {
     background: rgba(255, 107, 107, 0.2);
     color: #FF6B6B;
     border: 1px solid rgba(255, 107, 107, 0.3);
-}
-
-.side-games {
-    padding-left: 10px;
 }
 
 .side-controls {
@@ -199,6 +195,10 @@ h1 {
     background: #e74c3c;
 }
 
+.side-btn.deselect {
+    background: rgb(69, 146, 173);
+}
+
 .side-btn.danger:hover {
     background: #c0392b;
 }
@@ -209,6 +209,25 @@ h1 {
 
 .side-dire {
     color: #FF6B6B;
+}
+
+.player-names-section {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.player-names-section h4 {
+    margin: 0 0 8px 0;
+    color: #FFD700;
+    font-size: 1em;
+}
+
+.player-names-list {
+    font-size: 13px;
+    color: #FFFFFF;
+    opacity: 0.9;
+    line-height: 1.4;
 }
 
 .visualization-section {

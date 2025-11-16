@@ -163,6 +163,7 @@ function parseCSVData(csv) {
     }
     
     populateGamesList();
+    populatePlayerNames();
     updateVisualization();
     updateStats();
 }
@@ -237,7 +238,7 @@ function populateGamesList() {
         selectAllBtn.onclick = () => selectAllSide(side);
 
         const deselectAllBtn = document.createElement('button');
-        deselectAllBtn.className = 'side-btn danger';
+        deselectAllBtn.className = 'side-btn deselect';
         deselectAllBtn.textContent = 'Deselect All';
         deselectAllBtn.onclick = () => deselectAllSide(side);
 
@@ -296,6 +297,47 @@ function populateGamesList() {
         sideSection.appendChild(sideGames);
         gamesList.appendChild(sideSection);
     });
+}
+
+/**
+ * Populate player names section with unique team players
+ */
+function populatePlayerNames() {
+    const playerNamesSection = document.getElementById('playerNamesSection');
+    const playerNamesList = document.getElementById('playerNamesList');
+    
+    if (!playerNamesSection || !playerNamesList) return;
+    
+    // Collect all unique player names from all games
+    const allPlayerNames = new Set();
+    
+    gamesData.forEach(game => {
+        if (game.heroPlayers && typeof game.heroPlayers === 'object') {
+            Object.values(game.heroPlayers).forEach(playerName => {
+                if (playerName && playerName.trim()) {
+                    allPlayerNames.add(playerName.trim());
+                }
+            });
+        }
+    });
+    
+    // Clear existing content
+    playerNamesList.innerHTML = '';
+    
+    if (allPlayerNames.size === 0) {
+        playerNamesSection.style.display = 'none';
+        return;
+    }
+    
+    // Sort player names alphabetically and create comma-separated sentence
+    const sortedPlayerNames = Array.from(allPlayerNames).sort();
+    const playerSentence = sortedPlayerNames.join(', ');
+    
+    // Display as a single sentence
+    playerNamesList.textContent = playerSentence;
+    
+    // Show the section
+    playerNamesSection.style.display = 'block';
 }
 
 /**
