@@ -148,10 +148,10 @@ if __name__ == "__main__":
     argparse = argparse.ArgumentParser()
     argparse.add_argument('--team', type=str, default='yb', choices=['yb'])
     argparse.add_argument('--ward-cnt', type=int, default=2)
-    argparse.add_argument('--top-n', type=int, default=None)
+    argparse.add_argument('--top-n', type=int, default=5)
+    argparse.add_argument('--player', type=str, default='YB.BoBoKa')
     args = argparse.parse_args()
     team_name = args.team
-    assert team_name in ['yb']
 
     max_ward_cnt = args.ward_cnt
     print('Collecting events with observer ward count <=', max_ward_cnt)
@@ -197,7 +197,12 @@ if __name__ == "__main__":
     key_players = {
         'yb': 'YB.BoBoKa',
     }
-    
+    key_player = args.player
+    if key_player is None:
+        key_player = key_players.get(team_name, None)
+    if key_player is None:
+        raise ValueError(f'key_player is not set, please set it with --player')
+
     events_summary = []
 
     for i in tqdm(range(0, game_num), desc='Processing games'):
@@ -205,9 +210,9 @@ if __name__ == "__main__":
 
         # if '8526048356' not in data_html_path.stem:
             # continue
-        events, hero_players, hero_players_against, game_time, side = parse_events(data_html_path, map_width, map_height, key_player=key_players[team_name])
+        events, hero_players, hero_players_against, game_time, side = parse_events(data_html_path, map_width, map_height, key_player=key_player)
         # assert 0 < len(hero_players_against) <= 5, f'hero_players_against: {hero_players_against}'
-        print(hero_players_against)
+        # print(hero_players_against)
         events_summary.append({
             'events': events,
             'hero_players': hero_players,
