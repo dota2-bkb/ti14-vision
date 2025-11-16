@@ -26,11 +26,32 @@ body {
     gap: 30px;
 }
 
+.title-section {
+    flex: 1;
+}
+
 h1 {
-    margin: 0;
+    margin: 0 0 8px 0;
     font-size: 2.5em;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    flex: 1;
+}
+
+.github-subtitle {
+    margin: 0;
+    font-size: 0.9em;
+    opacity: 0.8;
+    margin-left: 4rem;
+}
+
+.github-subtitle a {
+    color: #4ECDC4;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.github-subtitle a:hover {
+    color: #FFD700;
+    text-decoration: underline;
 }
 
 .upload-section {
@@ -526,4 +547,57 @@ h1 {
     background: rgba(255, 107, 107, 0.1);
     border-radius: 8px;
     margin: 10px 0;
+}
+
+/* Partnership Footer Section */
+.partnership-footer {
+    margin-top: 20px;
+    /* padding: 30px 0;
+    background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+    border-top: 1px solid rgba(255, 255, 255, 0.1); */
+}
+
+.partnership-section {
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.partnership-section h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.5em;
+    color: #FFD700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.partnership-placeholder {
+    margin: 0 0 20px 0;
+    font-size: 1em;
+    color: #FFFFFF;
+    opacity: 0.9;
+    line-height: 1.5;
+}
+
+.partnership-links {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.partnership-item {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    font-size: 0.9em;
+    color: #FFFFFF;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.partnership-item:hover {
+    background: rgba(255, 215, 0, 0.2);
+    opacity: 1;
+    transform: translateY(-2px);
 }
