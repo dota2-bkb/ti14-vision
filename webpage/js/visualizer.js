@@ -94,7 +94,7 @@ function convertPythonTuplesToJSON(str) {
  * Parse CSV data and populate game information
  */
 function parseCSVData(csv) {
-    const lines = csv.trim().split('\n');
+    const lines = csv.trim().split(/\r?\n/);
     const headers = lines[0].split(',');
     
     gamesData = [];
@@ -113,6 +113,21 @@ function parseCSVData(csv) {
         const side = parts[3];
         const gameId = parts[4];
         const gameTime = parts[5];
+
+        // Debug logging for date parsing issues
+        if (gameTime && gameTime.trim()) {
+            const testDate = new Date(gameTime.trim());
+            if (isNaN(testDate.getTime())) {
+                console.warn('Invalid date detected:', {
+                    gameId: gameId,
+                    gameTimeRaw: JSON.stringify(gameTime),
+                    gameTimeTrimmed: JSON.stringify(gameTime.trim()),
+                    gameTimeLength: gameTime.length,
+                    lineLength: line.length,
+                    partsCount: parts.length
+                });
+            }
+        }
 
         try {
             let jsonStr = eventsStr.replace(/'/g, '"');
@@ -200,7 +215,8 @@ function parseCSVLine(line) {
     }
     
     result.push(current);
-    return result;
+    // Trim whitespace and carriage returns from all fields
+    return result.map(field => field.trim());
 }
 
 /**

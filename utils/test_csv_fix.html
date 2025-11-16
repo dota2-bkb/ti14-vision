@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test CSV Date Parsing Fix</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>CSV Date Parsing Fix Test</h1>
+    <p>Select a CSV file to test the date parsing:</p>
+    <input type="file" id="csvFile" accept=".csv">
+    <div id="results"></div>
+
+    <script>
+        document.getElementById('csvFile').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const csv = e.target.result;
+                testCSVParsing(csv, file.name);
+            };
+            reader.readAsText(file);
+        });
+
+        function testCSVParsing(csv, filename) {
+            const results = document.getElementById('results');
+            results.innerHTML = `<h2>Testing: ${filename}</h2>`;
+
+            // Test line splitting
+            const lines = csv.trim().split(/\r?\n/);
+            addResult(`Found ${lines.length} lines`, 'info');
+
+            // Check for carriage returns
+            const crCount = (csv.match(/\r/g) || []).length;
+            if (crCount > 0) {
+                addResult(`Warning: Found ${crCount} carriage return characters`, 'error');
+            } else {
+                addResult('No carriage return characters found', 'success');
+            }
+
+            // Test parsing each data line
+            let successCount = 0;
+            let errorCount = 0;
+
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i];
+                if (!line.trim()) continue;
+
+                const parts = parseCSVLine(line);
+                if (parts.length >= 6) {
+                    const gameTime = parts[5];
+                    const date = new Date(gameTime.trim());
+                    
+                    if (isNaN(date.getTime())) {
+                        addResult(`Line ${i}: Invalid date - "${gameTime}"`, 'error');
+                        errorCount++;
+                    } else {
+                        addResult(`Line ${i}: Valid date - ${date.toLocaleString()}`, 'success');
+                        successCount++;
+                    }
+                } else {
+                    addResult(`Line ${i}: Invalid CSV structure (${parts.length} fields)`, 'error');
+                    errorCount++;
+                }
+            }
+
+            // Summary
+            addResult(`Summary: ${successCount} valid dates, ${errorCount} errors`, 
+                     errorCount === 0 ? 'success' : 'error');
+        }
+
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            let i = 0;
+
+            while (i < line.length) {
+                const char = line[i];
+                
+                if (char === '"') {
+                    if (inQuotes && line[i + 1] === '"') {
+                        current += '"';
+                        i += 2;
+                        continue;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                    i++;
+                    continue;
+                } else {
+                    current += char;
+                }
+                i++;
+            }
+            
+            result.push(current);
+            return result.map(field => field.trim());
+        }
+
+        function addResult(message, type) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.textContent = message;
+            results.appendChild(div);
+        }
+    </script>
+</body>
+</html>

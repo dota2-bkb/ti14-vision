@@ -4,7 +4,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from pathlib import Path
 from tqdm import tqdm
-from utils_vis import draw_arrow_fixed_tip
+from utils.vis import draw_arrow_fixed_tip
 
 
 def to_timedelta(t):
@@ -146,7 +146,7 @@ def parse_events(file_path, map_width, map_height, key_player):
 
 if __name__ == "__main__":
     argparse = argparse.ArgumentParser()
-    argparse.add_argument('--team', type=str, default='yb', choices=['yb'])
+    argparse.add_argument('--team', type=str, default='yb')
     argparse.add_argument('--ward-cnt', type=int, default=2)
     argparse.add_argument('--top-n', type=int, default=5)
     argparse.add_argument('--player', type=str, default='YB.BoBoKa')
@@ -224,7 +224,7 @@ if __name__ == "__main__":
 
     # save the events summary, then will be used for web visualization
     events_summary_df = pd.DataFrame(events_summary)
-    events_summary_df.to_csv(out_dir / f'events_summary.csv', index=False)
+    events_summary_df.to_csv(out_dir / f'events_summary.csv', index=False, lineterminator='\n')
     print('events_summary.csv saved')
     
     for side in sides:
