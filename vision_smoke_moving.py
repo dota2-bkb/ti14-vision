@@ -40,15 +40,38 @@ def parse_events(file_path, map_width, map_height, key_player):
         content = file.read()
     
     soup = BeautifulSoup(content, 'html.parser')
-    events = []
 
     # check if the game side is Radiant or Dire
     res = soup.find('a', string=key_player)
     if 'radiant' in str(res).lower():
         side = 'radiant'
+        side_against = 'dire'
     else:
         side = 'dire'
+        side_against = 'radiant'
     # print(side)
+
+    # parse the time of the game, the the year-month-day
+    # <time datetime="2025-11-15T17:24:12+00:00" title="Sat, 15 Nov 2025 17:24:12 +0000" data-time-ago="2025-11-15T17:24:12+00:00">13 hours ago</time>
+    time_span = soup.find('time')
+    game_time = time_span['datetime']
+
+    # find the player and hero name
+    player_section = soup.find('section', class_=side)
+    player_section_against = soup.find('section', class_=side_against)
+    hero_players = dict()
+    hero_players_against = dict()
+
+    for player in player_section.find_all('tr', class_=f'faction-{side}'):
+        hero = player.find('img', class_='image-hero image-icon')
+        hero_name = hero['title'].replace("'", "")
+        player_name = player.find('a', class_=f'player-{side}')
+        hero_players[hero_name] = player_name.get_text(strip=True)
+    for player in player_section_against.find_all('tr', class_=f'faction-{side_against}'):
+        hero = player.find('img', class_='image-hero image-icon')
+        hero_name = hero['title'].replace("'", "")
+        player_name = player.find('a', class_=f'player-{side_against}')
+        hero_players_against[hero_name] = player_name.get_text(strip=True)
 
     # Assuming events are in a specific HTML structure, e.g., <div class="event">
     soup = soup.find('div', class_='match-log')
@@ -118,7 +141,7 @@ def parse_events(file_path, map_width, map_height, key_player):
             hero_events[hero_name].append(event)
     # print(hero_events)
    
-    return hero_events, side
+    return hero_events, hero_players, hero_players_against, game_time, side
 
 
 if __name__ == "__main__":
@@ -179,11 +202,19 @@ if __name__ == "__main__":
 
     for i in tqdm(range(0, game_num), desc='Processing games'):
         data_html_path = games[i]
-        events, side = parse_events(data_html_path, map_width, map_height, key_player=key_players[team_name])
+
+        # if '8526048356' not in data_html_path.stem:
+            # continue
+        events, hero_players, hero_players_against, game_time, side = parse_events(data_html_path, map_width, map_height, key_player=key_players[team_name])
+        # assert 0 < len(hero_players_against) <= 5, f'hero_players_against: {hero_players_against}'
+        print(hero_players_against)
         events_summary.append({
             'events': events,
+            'hero_players': hero_players,
+            'hero_players_against': hero_players_against,
             'side': side,
             'game_id': data_html_path.stem.split(' ')[1],
+            'game_time': game_time,
         })
 
     # save the events summary, then will be used for web visualization

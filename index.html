@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dota 2 Events Visualizer</title>
+    <link rel="icon" type="image/png" href="assets/dota2_icon.png">
+    <link rel="shortcut icon" type="image/png" href="assets/dota2_icon.png">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -125,6 +127,29 @@
             cursor: pointer;
             flex: 1;
             font-size: 14px;
+        }
+
+        .game-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .game-main-info {
+            font-weight: bold;
+            font-size: 14px;
+            color: #FFD700;
+        }
+
+        .game-sub-info {
+            font-size: 12px;
+            color: #CCCCCC;
+            opacity: 0.9;
+        }
+
+        .opponent-name {
+            color: #FF6B6B;
+            font-weight: 500;
         }
 
         .side-section {
@@ -493,7 +518,7 @@
 <body>
     <div class="container">
         <div class="header-section">
-            <h1>🎮 Dota 2 Game Vision Visualizer - SPACE</h1>
+            <h1><img src="assets/dota2_icon.png" alt="Dota 2" style="width: 50px; height: 50px; vertical-align: middle; margin-right: 10px;; margin-top: -10px;">Dota 2 Game Vision Visualizer - SPACE</h1>
             
             <div class="upload-section">
                 <h3>Load Events Data</h3>
@@ -522,6 +547,18 @@
                         <div class="toggle-controls">
                             <button id="sentryToggle" class="btn toggle-btn" onclick="toggleSentryWards()">
                                 🔵 Show Sentry Wards
+                            </button>
+                            <button id="smokeToggle" class="btn toggle-btn active" onclick="toggleSmoke()">
+                                🟣 Hide Smoke
+                            </button>
+                            <button id="observerOnlyToggle" class="btn toggle-btn" onclick="toggleObserverOnly()">
+                                🟡 Show This Ward Only
+                            </button>
+                            <button id="arrowToggle" class="btn toggle-btn active" onclick="toggleArrows()">
+                                🏹 Hide Path
+                            </button>
+                            <button id="timeToggle" class="btn toggle-btn active" onclick="toggleTime()">
+                                🕐 Hide Time
                             </button>
                         </div>
                     </div>
@@ -568,6 +605,10 @@
         let selectedGames = new Set();
         let maxObserverWards = 2;
         let showSentryWards = false;
+        let showSmoke = true;
+        let showArrows = true;
+        let showTime = true;
+        let observerOnlyMode = false;
 
         // File upload handler
         document.getElementById('csvFile').addEventListener('change', function(event) {
@@ -638,11 +679,14 @@
 
                 // Parse CSV line carefully (handling quoted content)
                 const parts = parseCSVLine(line);
-                if (parts.length < 3) continue;
+                if (parts.length < 6) continue; // Now expecting 6 fields
 
                 const eventsStr = parts[0].replace(/^"|"$/g, ''); // Remove surrounding quotes
-                const side = parts[1];
-                const gameId = parts[2];
+                const heroPlayersStr = parts[1].replace(/^"|"$/g, '');
+                const heroPlayersAgainstStr = parts[2].replace(/^"|"$/g, '');
+                const side = parts[3];
+                const gameId = parts[4];
+                const gameTime = parts[5];
 
                 try {
                     // Parse the events JSON string - need to handle Python tuples
@@ -651,15 +695,27 @@
                     // More comprehensive tuple replacement
                     jsonStr = convertPythonTuplesToJSON(jsonStr);
                     
-                    console.log('Attempting to parse JSON for game', gameId);
-                    console.log('JSON string sample:', jsonStr.substring(0, 300));
                     
                     const eventsData = JSON.parse(jsonStr);
+                    
+                    // Parse hero players data
+                    let heroPlayers = {};
+                    let heroPlayersAgainst = {};
+                    
+                    try {
+                        heroPlayers = JSON.parse(heroPlayersStr.replace(/'/g, '"'));
+                        heroPlayersAgainst = JSON.parse(heroPlayersAgainstStr.replace(/'/g, '"'));
+                    } catch (e) {
+                        console.warn('Failed to parse hero players for game', gameId, ':', e);
+                    }
                     
                     const gameInfo = {
                         gameId: gameId,
                         side: side,
-                        events: eventsData
+                        events: eventsData,
+                        heroPlayers: heroPlayers,
+                        heroPlayersAgainst: heroPlayersAgainst,
+                        gameTime: gameTime
                     };
 
                     gamesData.push(gameInfo);
@@ -803,7 +859,23 @@
 
                     const label = document.createElement('label');
                     label.htmlFor = `game_${game.originalIndex}`;
-                    label.innerHTML = `<strong>Game ${game.gameId}</strong>`;
+                    
+                    // Format the game time to local time
+                    const gameDate = new Date(game.gameTime);
+                    const localDateTime = gameDate.toLocaleString();
+                    
+                    // Get opponent player names
+                    const opponentNames = Object.values(game.heroPlayersAgainst || {});
+                    const opponentDisplay = opponentNames.length > 0 ? opponentNames.join(', ') : 'Unknown';
+                    
+                    label.innerHTML = `
+                        <div class="game-info">
+                            <div class="game-main-info">${localDateTime}</div>
+                            <div class="game-sub-info">
+                                Match ${game.gameId} vs <span class="opponent-name">${opponentDisplay}</span>
+                            </div>
+                        </div>
+                    `;
 
                     gameItem.appendChild(checkbox);
                     gameItem.appendChild(label);
@@ -881,6 +953,78 @@
             }
         }
 
+        function toggleArrows() {
+            showArrows = !showArrows;
+            const toggleBtn = document.getElementById('arrowToggle');
+            
+            if (showArrows) {
+                toggleBtn.textContent = '🏹 Hide Path';
+                toggleBtn.classList.add('active');
+            } else {
+                toggleBtn.textContent = '🏹 Show Path';
+                toggleBtn.classList.remove('active');
+            }
+            
+            if (gamesData.length > 0) {
+                updateVisualization();
+                updateStats();
+            }
+        }
+
+        function toggleSmoke() {
+            showSmoke = !showSmoke;
+            const toggleBtn = document.getElementById('smokeToggle');
+            
+            if (showSmoke) {
+                toggleBtn.textContent = '🟣 Hide Smoke';
+                toggleBtn.classList.add('active');
+            } else {
+                toggleBtn.textContent = '🟣 Show Smoke';
+                toggleBtn.classList.remove('active');
+            }
+            
+            if (gamesData.length > 0) {
+                updateVisualization();
+                updateStats();
+            }
+        }
+
+        function toggleTime() {
+            showTime = !showTime;
+            const toggleBtn = document.getElementById('timeToggle');
+            
+            if (showTime) {
+                toggleBtn.textContent = '🕐 Hide Time';
+                toggleBtn.classList.add('active');
+            } else {
+                toggleBtn.textContent = '🕐 Show Time';
+                toggleBtn.classList.remove('active');
+            }
+            
+            if (gamesData.length > 0) {
+                updateVisualization();
+                updateStats();
+            }
+        }
+
+        function toggleObserverOnly() {
+            observerOnlyMode = !observerOnlyMode;
+            const toggleBtn = document.getElementById('observerOnlyToggle');
+            
+            if (observerOnlyMode) {
+                toggleBtn.textContent = '🟡 Show All Events';
+                toggleBtn.classList.add('active');
+            } else {
+                toggleBtn.textContent = '🟡 Show This Ward Only';
+                toggleBtn.classList.remove('active');
+            }
+            
+            if (gamesData.length > 0) {
+                updateVisualization();
+                updateStats();
+            }
+        }
+
         function updateVisualization() {
             const mapContainer = document.getElementById('mapContainer');
             
@@ -890,7 +1034,12 @@
             document.querySelectorAll('.path-arrow').forEach(arrow => arrow.remove());
 
             // Filter events based on selected games and ward limits
-            const filteredEvents = filterEventsByWardLimit(allEvents.filter(event => selectedGames.has(event.gameId)));
+            let filteredEvents = filterEventsByWardLimit(allEvents.filter(event => selectedGames.has(event.gameId)));
+            
+            // Apply observer-only mode if enabled
+            if (observerOnlyMode) {
+                filteredEvents = filterObserverOnlyMode(filteredEvents);
+            }
 
             // Group events by game and hero for path drawing
             const eventsByGameAndHero = {};
@@ -909,10 +1058,12 @@
                 });
             });
 
-            // Draw path arrows first (so they appear behind markers)
-            Object.values(eventsByGameAndHero).forEach(heroEvents => {
-                drawHeroPath(heroEvents, mapContainer);
-            });
+            // Draw path arrows first (so they appear behind markers) - only if enabled
+            if (showArrows) {
+                Object.values(eventsByGameAndHero).forEach(heroEvents => {
+                    drawHeroPath(heroEvents, mapContainer);
+                });
+            }
 
             // Count observer wards per game for labeling
             const observerWardCounts = {};
@@ -959,9 +1110,20 @@
         }
 
         function updateLegendVisibility() {
-            const sentryLegendItem = document.querySelector('.legend-item:nth-child(2)');
-            if (sentryLegendItem) {
-                sentryLegendItem.style.display = showSentryWards ? 'flex' : 'none';
+            const observerLegend = document.querySelector('.legend-item:nth-child(1)');
+            const sentryLegend = document.querySelector('.legend-item:nth-child(2)');
+            const smokeLegend = document.querySelector('.legend-item:nth-child(3)');
+            
+            if (observerOnlyMode) {
+                // In observer-only mode, show only observer legend
+                if (observerLegend) observerLegend.style.display = 'flex';
+                if (sentryLegend) sentryLegend.style.display = 'none';
+                if (smokeLegend) smokeLegend.style.display = 'none';
+            } else {
+                // Normal mode - show based on toggles
+                if (observerLegend) observerLegend.style.display = 'flex';
+                if (sentryLegend) sentryLegend.style.display = showSentryWards ? 'flex' : 'none';
+                if (smokeLegend) smokeLegend.style.display = showSmoke ? 'flex' : 'none';
             }
         }
 
@@ -989,6 +1151,11 @@
             
             timeLabel.style.left = `${left}%`;
             timeLabel.style.top = `${top}%`;
+            
+            // Hide time label if time display is disabled
+            if (!showTime) {
+                timeLabel.style.display = 'none';
+            }
 
             // Add hover tooltip
             marker.addEventListener('mouseenter', function(e) {
@@ -1067,8 +1234,13 @@
                             if (showSentryWards) {
                                 filteredEvents.push(event);
                             }
+                        } else if (event.key_action === 'smoke') {
+                            // Include smoke events only if they're enabled
+                            if (showSmoke) {
+                                filteredEvents.push(event);
+                            }
                         } else {
-                            // Include observer wards and smoke events
+                            // Include observer wards
                             filteredEvents.push(event);
                         }
                     });
@@ -1085,11 +1257,16 @@
                                     filteredEvents.push(event);
                                     includedEvents++;
                                 }
+                            } else if (event.key_action === 'smoke') {
+                                // Include smoke events only if they're enabled
+                                if (showSmoke) {
+                                    filteredEvents.push(event);
+                                    includedEvents++;
+                                }
                             } else {
-                                // Include observer wards and smoke events
+                                // Include observer wards
                                 filteredEvents.push(event);
                                 includedEvents++;
-                                // console.log(`Including event at ${event.key_action} ${event.time} (${eventTime}s <= ${cutoffTime}s)`);
                             }
                         } else {
                             excludedEvents++;
@@ -1102,6 +1279,36 @@
                 }
             });
 
+            return filteredEvents;
+        }
+
+        function filterObserverOnlyMode(events) {
+            const eventsByGame = {};
+            events.forEach(event => {
+                const gameId = event.gameId;
+                if (!eventsByGame[gameId]) {
+                    eventsByGame[gameId] = [];
+                }
+                eventsByGame[gameId].push(event);
+            });
+
+            const filteredEvents = [];
+            Object.values(eventsByGame).forEach(gameEvents => {
+                gameEvents.sort((a, b) => parseTime(a.time) - parseTime(b.time));
+                
+                let observerWardCount = 0;
+                
+                // Find and include only the Nth observer ward for each game
+                for (let event of gameEvents) {
+                    if (event.key_action === 'placed_observer') {
+                        observerWardCount++;
+                        if (observerWardCount === maxObserverWards) {
+                            filteredEvents.push(event);
+                            break; // Only show the Nth observer ward
+                        }
+                    }
+                }
+            });
             return filteredEvents;
         }
 
@@ -1213,7 +1420,12 @@
         function updateStats() {
             // Get the same filtered events that are actually shown on the canvas
             const selectedEvents = allEvents.filter(event => selectedGames.has(event.gameId));
-            const filteredEvents = filterEventsByWardLimit(selectedEvents);
+            let filteredEvents = filterEventsByWardLimit(selectedEvents);
+            
+            // Apply observer-only mode if enabled
+            if (observerOnlyMode) {
+                filteredEvents = filterObserverOnlyMode(filteredEvents);
+            }
             
             // Deduplicate smoke events by game and time (same smoke affects multiple heroes)
             const uniqueSmokeEvents = new Set();
