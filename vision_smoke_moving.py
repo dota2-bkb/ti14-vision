@@ -185,6 +185,11 @@ if __name__ == "__main__":
             'side': side,
             'game_id': data_html_path.stem.split(' ')[1],
         })
+
+    # save the events summary, then will be used for web visualization
+    events_summary_df = pd.DataFrame(events_summary)
+    events_summary_df.to_csv(out_dir / f'events_summary.csv', index=False)
+    print('events_summary.csv saved')
     
     for side in sides:
         print(f'Processing side: {side}')
